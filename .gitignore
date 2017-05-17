@@ -1,0 +1,5 @@
+build
+*.pyc
+package
+cmake-build-*
+.idea*
