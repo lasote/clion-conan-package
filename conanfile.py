@@ -1,5 +1,5 @@
-from conans import ConanFile, tools
-from conans import CMake, AutoToolsBuildEnvironment
+from conans import ConanFile
+from conans import CMake
 
 
 class LibpngConan(ConanFile):
@@ -44,8 +44,9 @@ class LibpngConan(ConanFile):
         # Copying static and dynamic libs
         if self.settings.os == "Windows":
             if self.options.shared:
-                self.copy(pattern="*.dll", dst="bin", src="source", keep_path=False)
-            self.copy(pattern="*.lib", dst="lib", src="source", keep_path=False)
+                self.copy(pattern="*.dll", dst="bin", keep_path=False)
+            self.copy(pattern="*.lib", dst="lib", keep_path=False)
+            self.copy(pattern="*.a", dst="lib", keep_path=False)
         else:
             if self.options.shared:
                 if self.settings.os == "Macos":
@@ -57,12 +58,15 @@ class LibpngConan(ConanFile):
 
     def package_info(self):
         if self.settings.os == "Windows":
-            if self.options.shared:
-                self.cpp_info.libs = ['libpng16']
+            if self.settings.compiler == "gcc":
+                self.cpp_info.libs = ["png"]
             else:
-                self.cpp_info.libs = ['libpng16_static']
-            if self.settings.build_type == "Debug":
-                self.cpp_info.libs[0] += "d"
+                if self.options.shared:
+                    self.cpp_info.libs = ['libpng16']
+                else:
+                    self.cpp_info.libs = ['libpng16_static']
+                if self.settings.build_type == "Debug":
+                    self.cpp_info.libs[0] += "d"
         else:
             self.cpp_info.libs = ["png16"]
             if self.settings.os == "Linux":
