@@ -7,14 +7,16 @@ Follow the [Clion integration guide](http://docs.conan.io/en/latest/integrations
 Build the project with CLion
 ----------------------------
 
-First of all install the **libpng** dependencies:
+- Open this directory with CLion => File => Open.
 
-- Go to ``cmake-build-debug`` folder and run:
+- Install the **libpng** dependencies:
 
-```
-    conan install ../ -s build_type=Debug
-    
-```
+    - Go to ``cmake-build-debug`` folder and run:
+
+      ```
+          conan install ../ -s build_type=Debug
+   
+      ```
 
   It will install the **zlib** requirements and will generate a **conanbuildinfo.cmake** file. Repeat the process for the
   different build configurations specifing the settings accordingly.
