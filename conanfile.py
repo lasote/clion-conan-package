@@ -5,7 +5,7 @@ from conans import CMake, AutoToolsBuildEnvironment
 class LibpngConan(ConanFile):
     name = "libpng"
     version = "1.6.29"
-    generators = "cmake", "txt"
+    generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=True"
@@ -14,23 +14,22 @@ class LibpngConan(ConanFile):
     license = "Open source: http://www.libpng.org/pub/png/src/libpng-LICENSE.txt"
     description = "libpng is the official PNG reference library. It supports almost all PNG features, is extensible,"" \
     "" and has been extensively tested for over 20 years."
-    exports_sources = "Find*.cmake", "source*"
+    exports_sources = "Find*.cmake", "source*", "CMakeLists.txt"
     
     def configure(self):
         del self.settings.compiler.libcxx
         if self.settings.os == "Windows":
             self.options.remove("fPIC")
-        
 
     def build(self):
-        with tools.chdir("source"):
-            cmake = CMake(self.settings)
-            shared_options = "-DPNG_SHARED=ON -DPNG_STATIC=OFF" if self.options.shared else "-DPNG_SHARED=OFF -DPNG_STATIC=ON"
+        cmake = CMake(self)
+        if self.options.shared:
+            cmake.definitions["PNG_SHARED"] = "ON"
+        else:
+            cmake.definitions["PNG_SHARED"] = "OFF"
 
-            self.run("mkdir _build")
-            with tools.chdir("./_build"):
-                self.run('cmake .. %s %s' % (cmake.command_line, shared_options))
-                self.run("cmake --build . %s" % cmake.build_config)
+        cmake.configure()
+        cmake.build()
                 
     def package(self):
         """ Define your conan structure: headers, libs, bins and data. After building your
@@ -52,9 +51,9 @@ class LibpngConan(ConanFile):
                 if self.settings.os == "Macos":
                     self.copy(pattern="*.dylib", dst="lib", keep_path=False, links=True)
                 else:
-                    self.copy(pattern="*.so*", dst="lib", src="source", keep_path=False, links=True)
+                    self.copy(pattern="*.so*", dst="lib", src="", keep_path=False, links=True)
             else:
-                self.copy(pattern="*.a", dst="lib", src="source", keep_path=False, links=True)
+                self.copy(pattern="*.a", dst="lib", src="", keep_path=False, links=True)
 
     def package_info(self):
         if self.settings.os == "Windows":
