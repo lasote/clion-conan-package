@@ -14,7 +14,7 @@ Build the project with CLion
     - Go to ``cmake-build-debug`` folder and run:
 
       ```
-          conan install ../ -s build_type=Debug
+          conan install . -s build_type=Debug --install-folder=cmake-build-debug
    
       ```
 
@@ -30,19 +30,20 @@ Build the project with CLion
 Build/test the conan package
 ----------------------------
 
-- Just invoke `conan test_package` command in the root folder
-
-```
-    conan test_package
-    
-```
-
+- Use your CLion IDE to build the library
 - If you want to use the local conan funtcion ``package`` to see if everything looks fine in your conan package files:
 
 
 ```
-    mkdir package && cd package
-    conan package --build_folder=../cmake-build-debug ..
+    conan package . --build-folder cmake-build-debug --package-folder=mypackage
 ```
 
-  This command will copy all the conan package files to the local ``package`` directory.
+  This command will copy all the conan package files to the local ``mypackage`` directory.
+  
+ - If you want to directly export the package to the local cache use ``conan export-pkg`` command:
+ 
+ ```
+   conan export-pkg . mylibrary/1.0@myuser/channel --build-folder cmake-build-debug
+
+ ```
+
